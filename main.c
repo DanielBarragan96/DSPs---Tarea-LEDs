@@ -83,12 +83,16 @@ int main(void) {
 		/**Masks the GPIOC in the bit of interest*/
 		inputValue = inputValue & 0x40;
 		/**Note that the comparison is not inputValur == False, because it is safer if we switch the arguments*/
+
+		/*
+		//Ciclo usado para avanzar
 		if(FALSE == inputValue) {
 			if(i==1){
 				greenLEDOn();
 				delay(650000);
 				while(FALSE == inputValue){
 					inputValue = GPIOC->PDIR;
+					inputValue = inputValue & 0x40;
 					delay(650000);
 				}
 			}
@@ -97,6 +101,7 @@ int main(void) {
 				delay(650000);
 				while(FALSE == inputValue){
 					inputValue = GPIOC->PDIR;
+					inputValue = inputValue & 0x40;
 					delay(650000);
 				}
 			}
@@ -105,6 +110,7 @@ int main(void) {
 				delay(650000);
 				while(FALSE == inputValue){
 					inputValue = GPIOC->PDIR;
+					inputValue = inputValue & 0x40;
 					delay(650000);
 				}
 			}
@@ -113,6 +119,7 @@ int main(void) {
 				delay(650000);
 				while(FALSE == inputValue){
 					inputValue = GPIOC->PDIR;
+					inputValue = inputValue & 0x40;
 					delay(650000);
 				}
 			}
@@ -121,11 +128,63 @@ int main(void) {
 				delay(650000);
 				while(FALSE == inputValue){
 					inputValue = GPIOC->PDIR;
+					inputValue = inputValue & 0x40;
 					delay(650000);
 				}
 				i = 0;
 			}
 			i += 1;
+		}
+		*/
+		//Ciclo usado para atrasar
+		if(FALSE == inputValue) {
+			if(i==1){
+				greenLEDOn();
+				delay(650000);
+				while(FALSE == inputValue){
+					inputValue = GPIOC->PDIR;
+					inputValue = inputValue & 0x40;
+					delay(650000);
+					i = 6;
+				}
+			}
+			else if (i==2){
+				blueLEDOn();
+				delay(650000);
+				while(FALSE == inputValue){
+					inputValue = GPIOC->PDIR;
+					inputValue = inputValue & 0x40;
+					delay(650000);
+				}
+			}
+			else if (i==3){
+				purpleColor();
+				delay(650000);
+				while(FALSE == inputValue){
+					inputValue = GPIOC->PDIR;
+					inputValue = inputValue & 0x40;
+					delay(650000);
+				}
+			}
+			else if (i==4){
+				redLEDOn();
+				delay(650000);
+				while(FALSE == inputValue){
+					inputValue = GPIOC->PDIR;
+					inputValue = inputValue & 0x40;
+					delay(650000);
+				}
+			}
+			else if (i==5){
+				yellowColor();
+				delay(650000);
+				while(FALSE == inputValue){
+					inputValue = GPIOC->PDIR;
+					inputValue = inputValue & 0x40;
+					delay(650000);
+				}
+			}
+			i -= 1;
 		}else{
 			//turnLEDsOff();
 		}
