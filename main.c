@@ -37,6 +37,10 @@
 #include "MK64F12.h"
 
 void delay(uint16 delay);
+void turnLEDsOff();
+void blueLEDOn();
+void redLEDOn();
+void greenLEDOn();
 /*
  * @brief   Application entry point.
  */
@@ -68,32 +72,18 @@ int main(void) {
 	/**Configures GPIOE pin26 as output*/
 	GPIOE->PDDR |= 0x04000000;
 
+	uint32 i = 0;
+
     while(1) {
     	/**Reads all the GPIOC*/
 		inputValue = GPIOC->PDIR;
 		/**Masks the GPIOC in the bit of interest*/
 		inputValue = inputValue & 0x40;
 		/**Note that the comparison is not inputValur == False, because it is safer if we switch the arguments*/
-		if(FALSE == inputValue)
-		{
-			GPIOB->PDOR |= 0x00200000;/**Blue led off*/
-			delay(65000);
-			GPIOB->PDOR |= 0x00400000;/**Read led off*/
-			delay(65000);
-			GPIOE->PDOR |= 0x4000000;/**Green led off*/
-			delay(65000);
-			GPIOB->PDOR &= ~(0x00200000);/**Blue led on*/
-			delay(65000);
-			GPIOB->PDOR &= ~(0x00400000);/**Read led on*/
-			delay(65000);
-			GPIOE->PDOR &= ~(0x4000000);/**Green led on*/
-			delay(65000);
-			GPIOB->PDOR |= 0x00200000;/**Blue led off*/
-			delay(65000);
-			GPIOB->PDOR |= 0x00400000;/**Read led off*/
-			delay(65000);
-			GPIOE->PDOR |= 0x4000000;/**Green led off*/
-			delay(65000);
+		if(FALSE == inputValue) {
+			purpleColor();
+		}else{
+			turnLEDsOff();
 		}
     }
     return 0 ;
@@ -109,4 +99,41 @@ void delay(uint16 delay)
 	for(counter=delay; counter > 0; counter--)
 	{
 	}
+}
+void turnLEDsOff(){
+			GPIOB->PDOR |= 0x00200000;/**Blue led off*/
+			delay(65000);
+			GPIOB->PDOR |= 0x00400000;/**Read led off*/
+			delay(65000);
+			GPIOE->PDOR |= 0x4000000;/**Green led off*/
+			delay(65000);
+}
+
+void blueLEDOn(){
+	GPIOB->PDOR &= ~(0x00200000);/**Blue led on*/
+	delay(65000);
+}
+void redLEDOn(){
+	GPIOB->PDOR &= ~(0x00400000);/**Red led on*/
+	delay(65000);
+}
+void greenLEDOn(){
+	GPIOE->PDOR &= ~(0x4000000);/**Green led on*/
+	delay(65000);
+}
+void yellowColor(){
+	GPIOE->PDOR &= ~(0x4000000);/**Green led on*/
+	GPIOB->PDOR &= ~(0x00400000);/**Red led on*/
+	delay(65000);
+}
+void purpleColor(){
+	GPIOB->PDOR &= ~(0x00200000);/**Blue led on*/
+	GPIOB->PDOR &= ~(0x00400000);/**Red led on*/
+	delay(65000);
+}
+void whiteColor(){
+	GPIOB->PDOR &= ~(0x00400000);/**Red led on*/
+	GPIOB->PDOR &= ~(0x00200000);/**Blue led on*/
+	GPIOE->PDOR &= ~(0x4000000);/**Green led on*/
+	delay(65000);
 }
