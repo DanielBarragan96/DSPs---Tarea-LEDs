@@ -29,7 +29,7 @@
  */
  
 /**
- * @file    PushButton.c
+ * @file    Tarea_1_LED_RGB.c
  * @brief   Application entry point.
  */
 #include <stdio.h>
@@ -37,18 +37,28 @@
 #include "MK64F12.h"
 
 void delay(uint16 delay);
+void turnLEDsOff();
+void blueLEDOn();
+void redLEDOn();
+void greenLEDOn();
+void yellowColor();
+void purpleColor();
+void whiteColor();
 /*
  * @brief   Application entry point.
  */
 int main(void) {
 	/**Variable to capture the input value*/
 	uint32 inputValue = 0;
+	uint32 inputValue2 = 0;
 
-	/**Activating the GPIOB, GPIOC and GPIOE clock gating*/
-	SIM->SCGC5 = 0x2C00;
+	/**Activating the GPIOA, GPIOB, GPIOC and GPIOE clock gating*/
+	SIM->SCGC5 = 0x2E00;// 0x2C00 SW2 || 0X2E00 SW2&SW3
 	/**Pin control configuration of GPIOB pin22 and pin21 as GPIO*/
 	PORTB->PCR[21] = 0x00000100;
 	PORTB->PCR[22] = 0x00000100;
+	/**Pin control configuration of GPIOA pin5 as GPIO with is pull-up resistor enabled*/
+	PORTA->PCR[4] = 0x00000103;
 	/**Pin control configuration of GPIOC pin6 as GPIO with is pull-up resistor enabled*/
 	PORTC->PCR[6] = 0x00000103;
 	/**Pin control configuration of GPIOE pin26 as GPIO*/
@@ -59,7 +69,9 @@ int main(void) {
 	GPIOB->PDOR |= 0x00400000;
 	/**Assigns a safe value to the output pin26 of the GPIOE*/
 	GPIOE->PDOR |= 0x04000000;
-
+	/**Configures GPIOA pin5 as input*/
+	GPIOA->PDDR &=~(0x10);
+	/**Configures GPIOC pin6 as input*/
 	GPIOC->PDDR &=~(0x40);
 	/**Configures GPIOB pin21 as output*/
 	GPIOB->PDDR = 0x00200000;
@@ -68,32 +80,139 @@ int main(void) {
 	/**Configures GPIOE pin26 as output*/
 	GPIOE->PDDR |= 0x04000000;
 
+	uint32 i = 0;
+
     while(1) {
+    	delay(650000);
     	/**Reads all the GPIOC*/
 		inputValue = GPIOC->PDIR;
 		/**Masks the GPIOC in the bit of interest*/
 		inputValue = inputValue & 0x40;
+		/**Reads all the GPIOC*/
+		inputValue2 = GPIOA->PDIR;
+		/**Masks the GPIOC in the bit of interest*/
+		inputValue2 = inputValue2 & 0x10;
 		/**Note that the comparison is not inputValur == False, because it is safer if we switch the arguments*/
-		if(FALSE == inputValue)
-		{
-			GPIOB->PDOR |= 0x00200000;/**Blue led off*/
-			delay(65000);
-			GPIOB->PDOR |= 0x00400000;/**Read led off*/
-			delay(65000);
-			GPIOE->PDOR |= 0x4000000;/**Green led off*/
-			delay(65000);
-			GPIOB->PDOR &= ~(0x00200000);/**Blue led on*/
-			delay(65000);
-			GPIOB->PDOR &= ~(0x00400000);/**Read led on*/
-			delay(65000);
-			GPIOE->PDOR &= ~(0x4000000);/**Green led on*/
-			delay(65000);
-			GPIOB->PDOR |= 0x00200000;/**Blue led off*/
-			delay(65000);
-			GPIOB->PDOR |= 0x00400000;/**Read led off*/
-			delay(65000);
-			GPIOE->PDOR |= 0x4000000;/**Green led off*/
-			delay(65000);
+
+		//Ciclo usado para atrasar
+		if(FALSE == inputValue & FALSE == inputValue2){
+			whiteColor();
+			inputValue = GPIOC->PDIR;
+			inputValue = inputValue & 0x40;
+			inputValue2 = GPIOA->PDIR;
+			inputValue2 = inputValue2 & 0x10;
+			delay(650000);
+			while(FALSE == inputValue && FALSE == inputValue2){
+				inputValue = GPIOC->PDIR;
+				inputValue = inputValue & 0x40;
+				inputValue2 = GPIOA->PDIR;
+				inputValue2 = inputValue2 & 0x10;
+				delay(650000);
+			}
+		}
+		else if(FALSE == inputValue) {
+			i += 1;
+			if(i==6){
+				i=1;
+			}
+			if(i==1){
+				greenLEDOn();
+				delay(650000);
+				while(FALSE == inputValue){
+					inputValue = GPIOC->PDIR;
+					inputValue = inputValue & 0x40;
+					delay(650000);
+				}
+			}
+			else if (i==2){
+				blueLEDOn();
+				delay(650000);
+				while(FALSE == inputValue){
+					inputValue = GPIOC->PDIR;
+					inputValue = inputValue & 0x40;
+					delay(650000);
+				}
+			}
+			else if (i==3){
+				purpleColor();
+				delay(650000);
+				while(FALSE == inputValue){
+					inputValue = GPIOC->PDIR;
+					inputValue = inputValue & 0x40;
+					delay(650000);
+				}
+			}
+			else if (i==4){
+				redLEDOn();
+				delay(650000);
+				while(FALSE == inputValue){
+					inputValue = GPIOC->PDIR;
+					inputValue = inputValue & 0x40;
+					delay(650000);
+				}
+			}
+			else if (i==5){
+				yellowColor();
+				delay(650000);
+				while(FALSE == inputValue){
+					inputValue = GPIOC->PDIR;
+					inputValue = inputValue & 0x40;
+					delay(650000);
+				}
+				i = 0;
+			}
+		}
+		else if(FALSE == inputValue2) {
+			i -= 1;
+			if(i==0){
+				i=5;
+			}
+			if(i==1){
+				greenLEDOn();
+				delay(650000);
+				while(FALSE == inputValue2){
+					inputValue2 = GPIOA->PDIR;
+					inputValue2 = inputValue2 & 0x10;
+					delay(650000);
+					i = 6;
+				}
+			}
+			else if (i==2){
+				blueLEDOn();
+				delay(650000);
+				while(FALSE == inputValue2){
+					inputValue2 = GPIOA->PDIR;
+					inputValue2 = inputValue2 & 0x10;
+					delay(650000);
+				}
+			}
+			else if (i==3){
+				purpleColor();
+				delay(650000);
+				while(FALSE == inputValue2){
+					inputValue2 = GPIOA->PDIR;
+					inputValue2 = inputValue2 & 0x10;
+					delay(650000);
+				}
+			}
+			else if (i==4){
+				redLEDOn();
+				delay(650000);
+				while(FALSE == inputValue2){
+					inputValue2 = GPIOA->PDIR;
+					inputValue2 = inputValue2 & 0x10;
+					delay(650000);
+				}
+			}
+			else if(i==5){
+				yellowColor();
+				delay(650000);
+				while(FALSE == inputValue2){
+					inputValue2 = GPIOA->PDIR;
+					inputValue2 = inputValue2 & 0x10;
+					delay(650000);
+				}
+			}
 		}
     }
     return 0 ;
@@ -109,4 +228,47 @@ void delay(uint16 delay)
 	for(counter=delay; counter > 0; counter--)
 	{
 	}
+}
+void turnLEDsOff(){
+			GPIOB->PDOR |= 0x00200000;/**Blue led off*/
+			delay(1000);//65000
+			GPIOB->PDOR |= 0x00400000;/**Read led off*/
+			delay(1000);
+			GPIOE->PDOR |= 0x4000000;/**Green led off*/
+			delay(1000);
+}
+
+void blueLEDOn(){
+		turnLEDsOff();
+	GPIOB->PDOR &= ~(0x00200000);/**Blue led on*/
+	delay(65000);
+}
+void redLEDOn(){
+		turnLEDsOff();
+	GPIOB->PDOR &= ~(0x00400000);/**Red led on*/
+	delay(65000);
+}
+void greenLEDOn(){
+		turnLEDsOff();
+	GPIOE->PDOR &= ~(0x4000000);/**Green led on*/
+	delay(65000);
+}
+void yellowColor(){
+		turnLEDsOff();
+	GPIOE->PDOR &= ~(0x4000000);/**Green led on*/
+	GPIOB->PDOR &= ~(0x00400000);/**Red led on*/
+	delay(65000);
+}
+void purpleColor(){
+		turnLEDsOff();
+	GPIOB->PDOR &= ~(0x00200000);/**Blue led on*/
+	GPIOB->PDOR &= ~(0x00400000);/**Red led on*/
+	delay(65000);
+}
+void whiteColor(){
+		turnLEDsOff();
+	GPIOB->PDOR &= ~(0x00400000);/**Red led on*/
+	GPIOB->PDOR &= ~(0x00200000);/**Blue led on*/
+	GPIOE->PDOR &= ~(0x4000000);/**Green led on*/
+	delay(65000);
 }
