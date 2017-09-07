@@ -58,7 +58,7 @@ int main(void) {
 	PORTB->PCR[21] = 0x00000100;
 	PORTB->PCR[22] = 0x00000100;
 	/**Pin control configuration of GPIOA pin5 as GPIO with is pull-up resistor enabled*/
-	PORTA->PCR[5] = 0x00000103;
+	PORTA->PCR[4] = 0x00000103;
 	/**Pin control configuration of GPIOC pin6 as GPIO with is pull-up resistor enabled*/
 	PORTC->PCR[6] = 0x00000103;
 	/**Pin control configuration of GPIOE pin26 as GPIO*/
@@ -80,9 +80,10 @@ int main(void) {
 	/**Configures GPIOE pin26 as output*/
 	GPIOE->PDDR |= 0x04000000;
 
-	uint32 i = 1;
+	uint32 i = 0;
 
     while(1) {
+    	delay(650000);
     	/**Reads all the GPIOC*/
 		inputValue = GPIOC->PDIR;
 		/**Masks the GPIOC in the bit of interest*/
@@ -94,11 +95,26 @@ int main(void) {
 		/**Note that the comparison is not inputValur == False, because it is safer if we switch the arguments*/
 
 		//Ciclo usado para atrasar
-		if(FALSE == inputValue && FALSE == inputValue2){
+		if(FALSE == inputValue & FALSE == inputValue2){
 			whiteColor();
+			inputValue = GPIOC->PDIR;
+			inputValue = inputValue & 0x40;
+			inputValue2 = GPIOA->PDIR;
+			inputValue2 = inputValue2 & 0x10;
 			delay(650000);
+			while(FALSE == inputValue && FALSE == inputValue2){
+				inputValue = GPIOC->PDIR;
+				inputValue = inputValue & 0x40;
+				inputValue2 = GPIOA->PDIR;
+				inputValue2 = inputValue2 & 0x10;
+				delay(650000);
+			}
 		}
 		else if(FALSE == inputValue) {
+			i += 1;
+			if(i==6){
+				i=1;
+			}
 			if(i==1){
 				greenLEDOn();
 				delay(650000);
@@ -145,10 +161,14 @@ int main(void) {
 				}
 				i = 0;
 			}
-			i += 1;
-		}else if(FALSE == inputValue2) {
+		}
+		else if(FALSE == inputValue2) {
+			i -= 1;
+			if(i==0){
+				i=5;
+			}
 			if(i==1){
-				yellowColor();
+				greenLEDOn();
 				delay(650000);
 				while(FALSE == inputValue2){
 					inputValue2 = GPIOA->PDIR;
@@ -158,7 +178,7 @@ int main(void) {
 				}
 			}
 			else if (i==2){
-				redLEDOn();
+				blueLEDOn();
 				delay(650000);
 				while(FALSE == inputValue2){
 					inputValue2 = GPIOA->PDIR;
@@ -176,7 +196,7 @@ int main(void) {
 				}
 			}
 			else if (i==4){
-				blueLEDOn();
+				redLEDOn();
 				delay(650000);
 				while(FALSE == inputValue2){
 					inputValue2 = GPIOA->PDIR;
@@ -185,7 +205,7 @@ int main(void) {
 				}
 			}
 			else if(i==5){
-				greenLEDOn();
+				yellowColor();
 				delay(650000);
 				while(FALSE == inputValue2){
 					inputValue2 = GPIOA->PDIR;
@@ -193,9 +213,6 @@ int main(void) {
 					delay(650000);
 				}
 			}
-			i -= 1;
-		}else{ /*if(FALSE == inputValue3)*{*/
-			//turnLEDsOff();
 		}
     }
     return 0 ;
