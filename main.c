@@ -53,7 +53,7 @@ int main(void) {
 	uint32 inputValue2 = 0;
 
 	/**Activating the GPIOA, GPIOB, GPIOC and GPIOE clock gating*/
-	SIM->SCGC5 = 0x2E00;
+	SIM->SCGC5 = 0x2E00;// 0x2C00 SW2 || 0X2E00 SW2&SW3
 	/**Pin control configuration of GPIOB pin22 and pin21 as GPIO*/
 	PORTB->PCR[21] = 0x00000100;
 	PORTB->PCR[22] = 0x00000100;
@@ -92,12 +92,12 @@ int main(void) {
 		/**Masks the GPIOC in the bit of interest*/
 		inputValue2 = inputValue2 & 0x10;
 		/**Note that the comparison is not inputValur == False, because it is safer if we switch the arguments*/
-		
+
+		//Ciclo usado para atrasar
 		if(FALSE == inputValue && FALSE == inputValue2){
 			whiteColor();
 			delay(650000);
 		}
-		//Ciclo usado para atrasar
 		else if(FALSE == inputValue) {
 			if(i==1){
 				greenLEDOn();
@@ -106,7 +106,6 @@ int main(void) {
 					inputValue = GPIOC->PDIR;
 					inputValue = inputValue & 0x40;
 					delay(650000);
-					i = 6;
 				}
 			}
 			else if (i==2){
@@ -144,8 +143,9 @@ int main(void) {
 					inputValue = inputValue & 0x40;
 					delay(650000);
 				}
+				i = 0;
 			}
-			i -= 1;
+			i += 1;
 		}else if(FALSE == inputValue2) {
 			if(i==1){
 				yellowColor();
